@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { User } from '../../model/User'
 import { sign } from 'jsonwebtoken'
 
@@ -14,14 +14,15 @@ interface UserData {
     avatar_url: string;
 }
 
-class AuthenticateUserService {
-    public code: string;
-    constructor(code: string) {
-        this.code = code
-    }
+interface AuthResponse {
+    token: string;
+    user: User;
+}
 
-    async execute(): Promise<string> {
-        const { data } = await this.getAccessToken()
+class AuthenticateUserService {
+
+    async execute(code: string): Promise<AuthResponse> {
+        const { data } = await this.getAccessToken(code)
         const { access_token } = data 
 
         const { data: userData } = await this.getGitHubUser(access_token)
@@ -34,17 +35,17 @@ class AuthenticateUserService {
 
         const token = this.generateToken(user)
 
-        return token
+        return { token, user }
     }
 
-    async getAccessToken() {
+    async getAccessToken(code: string) {
         const url = 'https://github.com/login/oauth/access_token'
 
         const response = await axios.post<AccessTokenResponse>(url, null, {
             params: {
                 client_id: process.env.GITHUB_CLIENT_ID,
                 client_secret: process.env.GITHUB_CLIENT_SECRET,
-                code: this.code
+                code
             },
             headers: {
                 'Accept': 'application/json'
@@ -54,7 +55,7 @@ class AuthenticateUserService {
         return response
     }
 
-    async getGitHubUser(accessToken: string) {
+    async getGitHubUser(accessToken: string): Promise<AxiosResponse<UserData>> {
         const response = await axios.get<UserData>('https://api.github.com/user', {
             headers: {
                 authorization: `Bearer ${accessToken}`
@@ -64,7 +65,7 @@ class AuthenticateUserService {
         return response
     }
 
-    async createUser({ name, login, avatar_url, id }: UserData) {
+    async createUser({ name, login, avatar_url, id }: UserData): Promise<User> {
         const user = await User.create({
             name,
             login,
@@ -75,7 +76,7 @@ class AuthenticateUserService {
         return user
     }
 
-    generateToken({ name, avatar_url, id }: User) {
+    generateToken({ name, avatar_url, id }: User): string {
         const token = sign(
             {
                 user: {
