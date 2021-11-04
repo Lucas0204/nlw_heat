@@ -6,6 +6,10 @@ interface NewMessageData {
     user_id: string;
 }
 
+interface HowManyMessages {
+    take: number;
+}
+
 class Message {
     static async create({ message, user_id }: NewMessageData) {
         const newMessage = await prisma.message.create({
@@ -18,6 +22,20 @@ class Message {
         })
 
         return newMessage
+    }
+
+    static async getMessages({ take }: HowManyMessages) {
+        const messages = await prisma.message.findMany({
+            take,
+            orderBy: {
+                created_at: 'desc'
+            },
+            include: {
+                user: true
+            }
+        })
+
+        return messages
     }
 
     static async getLastThreeMessages() {

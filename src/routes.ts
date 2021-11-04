@@ -3,6 +3,7 @@ import { AuthenticateUserController } from './useCases/authenticateUser/authenti
 import { CreateMessageController } from './useCases/createMessage/createMessageController'
 import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
 import { FetchThreeLastMessagesController } from './useCases/fetchThreeLastMessages/fetchThreeLastMessagesController'
+import { FetchMessagesController } from './useCases/fetchMessages/fetchMessagesController'
 
 const routes = Router()
 
@@ -21,5 +22,7 @@ routes.post('/authenticate', AuthenticateUserController.handle)
 routes.post('/message', ensureAuthenticated, CreateMessageController.handle)
 
 routes.get('/messages/last3', FetchThreeLastMessagesController.handle)
+
+routes.get('/messages', FetchMessagesController.handle)
 
 export { routes }
