@@ -25,12 +25,12 @@ class AuthenticateUserService {
         const { data } = await this.getAccessToken(code)
         const { access_token } = data 
 
-        const { data: userData } = await this.getGitHubUser(access_token)
+        const { data: githubUser } = await this.getGitHubUser(access_token)
 
-        let user = await User.find({ github_id: userData.id })
+        let user = await User.getUserByGithubId(githubUser.id)
 
         if (!user) {
-            user = await this.createUser(userData)
+            user = await this.createUser(githubUser)
         }
 
         const token = this.generateToken(user)

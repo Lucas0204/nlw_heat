@@ -1,9 +1,5 @@
 import { prisma } from '../database'
 
-interface FindArgs {
-    github_id: number;
-}
-
 interface UserData {
     name: string;
     login: string;
@@ -12,7 +8,7 @@ interface UserData {
 }
 
 class User {
-    static async find({ github_id }: FindArgs) {
+    static async getUserByGithubId(github_id: number) {
         const user = await prisma.user.findFirst({
             where: { github_id }
         })
@@ -20,10 +16,10 @@ class User {
         return user
     }
 
-    static async get(user_id: string) {
+    static async getUserById(id: string) {
         const user = await prisma.user.findUnique({
             where: {
-                id: user_id
+                id
             },
             include: {
                 messages: true
