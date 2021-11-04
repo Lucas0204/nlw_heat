@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { AuthenticateUserController } from './useCases/authenticateUser/authenticateUserController'
 import { CreateMessageController } from './useCases/createMessage/createMessageController'
 import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
+import { FetchThreeLastMessagesController } from './useCases/fetchThreeLastMessages/fetchThreeLastMessagesController'
 
 const routes = Router()
 
@@ -18,5 +19,7 @@ routes.get('/signin/callback', (req, res) => {
 routes.post('/authenticate', AuthenticateUserController.handle)
 
 routes.post('/message', ensureAuthenticated, CreateMessageController.handle)
+
+routes.get('/messages/last3', FetchThreeLastMessagesController.handle)
 
 export { routes }

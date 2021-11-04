@@ -20,6 +20,20 @@ class Message {
         return newMessage
     }
 
+    static async getLastThreeMessages() {
+        const messages = await prisma.message.findMany({
+            take: 3,
+            orderBy: { 
+                created_at: 'desc'
+            },
+            include: {
+                user: true
+            }
+        })
+
+        return messages
+    }
+
     declare id: string;
     declare message: string;
     declare created_at: Date;
