@@ -12,7 +12,6 @@ class FetchMessagesController {
         }
 
         const fetchMessagesService = new FetchMessagesService()
-
         const messages = await fetchMessagesService.execute({ take })
 
         return res.json(messages)

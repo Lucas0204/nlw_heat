@@ -20,6 +20,19 @@ class User {
         return user
     }
 
+    static async get(user_id: string) {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: user_id
+            },
+            include: {
+                messages: true
+            }
+        })
+
+        return user
+    }
+
     static async create({ name, login, github_id, avatar_url }: UserData) {
         const user = await prisma.user.create({
             data: {

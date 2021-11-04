@@ -4,6 +4,7 @@ import { CreateMessageController } from './useCases/createMessage/createMessageC
 import { ensureAuthenticated } from './middlewares/ensureAuthenticated'
 import { FetchThreeLastMessagesController } from './useCases/fetchThreeLastMessages/fetchThreeLastMessagesController'
 import { FetchMessagesController } from './useCases/fetchMessages/fetchMessagesController'
+import { UserProfileController } from './useCases/userProfile/userProfileController'
 
 const routes = Router()
 
@@ -24,5 +25,7 @@ routes.post('/message', ensureAuthenticated, CreateMessageController.handle)
 routes.get('/messages/last3', FetchThreeLastMessagesController.handle)
 
 routes.get('/messages', FetchMessagesController.handle)
+
+routes.get('/profile', ensureAuthenticated, UserProfileController.handle)
 
 export { routes }
